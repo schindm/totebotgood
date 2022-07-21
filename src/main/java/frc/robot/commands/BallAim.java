@@ -33,8 +33,20 @@ NetworkTable table = NetworkTableInstance.getDefault().getTable("myContoursRepor
 NetworkTableEntry centerX = table.getEntry("centerX");
 NetworkTableEntry area = table.getEntry("area");
 double[] Error;
+
  double pgain ;
+
+ double dgain;
+ double startingError = 0;
+ double dMod;
+
+ double timerCount;
+ double timeTarget;
+ 
  double minspeed;
+
+ double errorRange;
+
 double BigError;
 double reesponse;
 NetworkTable table2 = NetworkTableInstance.getDefault().getTable("SmartDashboard");
@@ -51,8 +63,13 @@ addRequirements(m_driveTrain);
   @Override
   public void initialize() {
     pgain = table2.getEntry("Pgain").getDouble(.0001);
-  
+    dgain = table2.getEntry("Dgain").getDouble(.01);
+    timeTarget = table2.getEntry("TargetTime").getDouble(3);
     minspeed = table2.getEntry("minspeed").getDouble(.1);
+
+    errorRange = table2.getEntry("ErrorRange").getDouble(1);
+
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -72,21 +89,31 @@ for(int listrun = 0; listrun <= areas.length-1; listrun++){
     biggest = listrun;
   }
 }
- 
-
-
-
-
 //cool <insert sun emoji>
 // test put id to smartsdashboard
 SmartDashboard.putNumber( "biggest", biggest);
  BigError  = Error[biggest] - 160   ; 
 SmartDashboard.putNumber("error but big", BigError);
 
-reesponse = pgain*BigError + minspeed*Math.signum(BigError);
 
+
+
+dMod = (startingError - BigError) * dgain;
+
+
+reesponse = pgain * BigError + dMod + minspeed * Math.signum(BigError);
+
+
+startingError = BigError;
 
 m_driveTrain.drive(reesponse, reesponse );
+
+
+if(BigError >= -errorRange && BigError <= errorRange){
+  timerCount++;
+} else {
+  timerCount = 0;
+}
 
 
   }
@@ -101,10 +128,7 @@ m_driveTrain.drive(reesponse, reesponse );
   @Override
   public boolean isFinished() {
     
-    if(BigError >= -1 && BigError <= 1){
-      return true;
-
-} return false;
+return (timerCount >= timeTarget);
 
   }
 }

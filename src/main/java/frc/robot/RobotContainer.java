@@ -53,17 +53,28 @@ private final tankdrive m_tankdrive = new  tankdrive(m_driveTrain, m_leftJoystic
   m_driveTrain.setDefaultCommand(m_tankdrive);
     // Configure the button bindings
     configureButtonBindings();
+
+    
+
    NetworkTable ozram = NetworkTableInstance.getDefault().getTable("SmartDashboard");
 
 
+// Aiming, PID variables on SmartDashboard
    NetworkTableEntry pgainEntry = ozram.getEntry("Pgain");
    pgainEntry.setNumber(.0001);
-
+   NetworkTableEntry dgainEntry = ozram.getEntry("Dgain");
+   dgainEntry.setNumber(.01);
+   NetworkTableEntry timeTarget = ozram.getEntry("TargetTime");
+   timeTarget.setNumber(3);
 // space
-
    NetworkTableEntry minspeed = ozram.getEntry("minspeed");
    minspeed.setNumber(.1);
+   NetworkTableEntry errorRange = ozram.getEntry("ErrorRange");
+   errorRange.setNumber(1);
+   
   
+
+
   }
  
   
