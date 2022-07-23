@@ -26,13 +26,13 @@ public class BallAim extends CommandBase {
   /** Creates a new BallAim. */
 Variable One;
 driveTrain m_driveTrain;
-double[] areas;
+double[] areas = {0, 0};
 double[]  defaultList= {};
 int biggest;
 NetworkTable table = NetworkTableInstance.getDefault().getTable("myContoursReport");
 NetworkTableEntry centerX = table.getEntry("centerX");
 NetworkTableEntry area = table.getEntry("area");
-double[] Error;
+double[] Error = {0, 0};
 
  double pgain ;
 
@@ -75,9 +75,16 @@ addRequirements(m_driveTrain);
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-areas =  area.getDoubleArray(defaultList)  ;
 
-Error =  centerX.getDoubleArray(defaultList)  ;
+    if(area.getDoubleArray(defaultList).length != 0){
+      areas =  area.getDoubleArray(defaultList)  ;
+    }
+
+    if(centerX.getDoubleArray(defaultList).length != 0){
+      Error =  centerX.getDoubleArray(defaultList)  ;
+    }
+
+
 
 
 
@@ -101,7 +108,7 @@ SmartDashboard.putNumber("error but big", BigError);
 dMod = (startingError - BigError) * dgain;
 
 
-reesponse = pgain * BigError + dMod + minspeed * Math.signum(BigError);
+reesponse = pgain * BigError + dMod * Math.signum(BigError) + minspeed * Math.signum(BigError);
 
 
 startingError = BigError;
@@ -128,7 +135,7 @@ if(BigError >= -errorRange && BigError <= errorRange){
   @Override
   public boolean isFinished() {
     
-return (timerCount >= timeTarget);
+return (timerCount >= timeTarget || areas.length == 0 );
 
   }
 }

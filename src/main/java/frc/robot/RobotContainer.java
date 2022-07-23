@@ -69,9 +69,12 @@ private final tankdrive m_tankdrive = new  tankdrive(m_driveTrain, m_leftJoystic
 // space
    NetworkTableEntry minspeed = ozram.getEntry("minspeed");
    minspeed.setNumber(.1);
+
+
    NetworkTableEntry errorRange = ozram.getEntry("ErrorRange");
    errorRange.setNumber(1);
    
+
   
 
 
